@@ -1,4 +1,3 @@
-from xmlrpc.client import TRANSPORT_ERROR
 import pygame
 
 pygame.init()
