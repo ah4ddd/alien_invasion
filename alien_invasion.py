@@ -1,4 +1,3 @@
-from turtle import position
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
@@ -27,9 +26,14 @@ class AlienInvasion:
             self._check_events()
             self.bullets.update()
             self._update_bullets()
+            self._update_aliens()
             print(len(self.bullets))
             self._update_screen()
             self.ship.update()
+
+    def _update_aliens(self):
+        self._check_fleet_edges()
+        self.aliens.update()
 
     def _create_fleet(self):
         alien = Alien(self)
@@ -52,6 +56,18 @@ class AlienInvasion:
         new_alien.rect.x = x_position
         new_alien.rect.y = y_position
         self.aliens.add(new_alien)
+
+    def _check_fleet_edges(self):
+        for alien in self.aliens.sprites():
+            if alien.check_edges():
+                self._change_fleet_direction()
+                break
+
+    def _change_fleet_direction(self):
+        for alien in self.aliens.sprites():
+            alien.rect.y += self.settings.fleet_drop_speed
+        self.settings.fleet_direction *= -1
+
 
     def _check_events(self):
         for event in pygame.event.get():
@@ -89,6 +105,7 @@ class AlienInvasion:
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
+            collision = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
 
     def _update_screen(self):
         self.screen.fill(self.settings.bg_color)
