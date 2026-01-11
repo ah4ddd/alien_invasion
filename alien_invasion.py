@@ -7,6 +7,7 @@ import pygame
 class AlienInvasion:
     def __init__(self):
         pygame.init()
+        self.game_active = False
         self.clock = pygame.time.Clock()
         self.settings = Settings()
         self.screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
