@@ -1,9 +1,9 @@
-from queue import Empty
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
 from game_stats import GameStats
+from button import Button
 import sys
 from time import sleep
 import pygame
@@ -23,25 +23,33 @@ class AlienInvasion:
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
         self._create_fleet()
+        self.play_button = Button(self, "Play")
 
     def run_game(self):
         while True:
-            self.clock.tick(60)
             self._check_events()
             self.bullets.update()
-            self._update_bullets()
-            self._update_aliens()
             print(len(self.bullets))
+
+            if self.game_active:
+                self.ship.update()
+                self._update_bullets()
+                self._update_aliens()
+
             self._update_screen()
-            self.ship.update()
+            self.clock.tick(60)
+
 
     def _ship_hit(self):
-        self.stats.ship_left -= 1
-        self.bullets.empty()
-        self.aliens.empty()
-        self._create_fleet()
-        self.ship.center_ship()
-        sleep(0.5)
+        if self.stats.ship_left > 0:
+            self.stats.ship_left -= 1
+            self.bullets.empty()
+            self.aliens.empty()
+            self._create_fleet()
+            self.ship.center_ship()
+            sleep(0.5)
+        else:
+            self.game_active = False
 
     def _update_aliens(self):
         self._check_fleet_edges()
@@ -140,6 +148,9 @@ class AlienInvasion:
             bullet.draw_bullet()
         self.ship.blitme()
         self.aliens.draw(self.screen)
+        #play button if the game is inactive
+        if not self.game_active:
+            self.play_button.draw_button()
         pygame.display.flip()
 
 
