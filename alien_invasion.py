@@ -1,3 +1,4 @@
+import alien
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
@@ -57,7 +58,7 @@ class AlienInvasion:
     def _update_aliens(self):
         self._check_fleet_edges()
         self.aliens.update()
-        if pygame.sprite.spritecollideany(self.ship, self.aliens):
+        if pygame.sprite.spritecollideany(self.ship, self.aliens): # type: ignore
             self._ship_hit()
         self._check_aliens_bottom()
 
@@ -119,6 +120,7 @@ class AlienInvasion:
         button_clicked = self.play_button.rect.collidepoint(mouse_pos)
         if button_clicked and not self.game_active:
             self.stats.reset_stats()
+            self.sb.prep_score()
             self.game_active = True
 
             self.bullets.empty()
@@ -161,6 +163,10 @@ class AlienInvasion:
 
     def _check_bullet_alien_collision(self):
         collision = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
+        if collision:
+            for aliens in collision.values():
+                self.stats.score += self.settings.alien_points * len(aliens)
+            self.sb.prep_score()
         if not self.aliens:
             self.bullets.empty()
             self._create_fleet()
