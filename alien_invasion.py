@@ -121,6 +121,7 @@ class AlienInvasion:
         if button_clicked and not self.game_active:
             self.stats.reset_stats()
             self.sb.prep_score()
+            self.sb.prep_level()
             self.game_active = True
 
             self.bullets.empty()
@@ -172,6 +173,10 @@ class AlienInvasion:
             self.bullets.empty()
             self._create_fleet()
             self.settings.increase_speed()
+
+            #level up
+            self.stats.level += 1
+            self.sb.prep_level()
 
     def _update_screen(self):
         self.screen.fill(self.settings.bg_color)
